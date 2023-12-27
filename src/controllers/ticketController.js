@@ -94,7 +94,7 @@ class TicketController {
     try {
       // Get seatNumber from request parameters
       const { seatNumber } = req.params;
-      console.log("Ticket service ", this);
+
       // Call the service to get ticket owner details
       const ownerDetails = await this.ticketService.getTicketOwnerDetails(
         seatNumber
@@ -112,11 +112,17 @@ class TicketController {
 
   async resetServer(req, res, next) {
     try {
-      // Call the service to reset the server
-      const resetResult = await this.ticketService.resetServer();
+      const { username, password } = req.body;
 
-      // Return the result
-      res.status(200).json({ success: resetResult });
+      if (username === "admin" && password === "admin#123") {
+        // Call the service to reset the server
+        const resetResult = await this.ticketService.resetServer();
+
+        // Return the result
+        res.status(200).json({ success: resetResult });
+      } else {
+        res.status(403).json({ error: "Access denied" });
+      }
     } catch (error) {
       // Handle or log the error
       res.status(500).json({ error: "Internal Server Error" });

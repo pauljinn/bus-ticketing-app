@@ -17,12 +17,11 @@ class TicketRepository {
         "UPDATE bus_seats SET status = $1 WHERE seat_number = $2 RETURNING *",
         [busSeat.status, busSeat.seatNumber]
       );
-
       // If closing the ticket, add passenger details
-      if (busSeat.status === "closed" && passenger.passengerName) {
+      if (busSeat.status === "closed") {
         const insertedPassenger = await client.query(
           "INSERT INTO passengers (name, seat_number) VALUES ($1, $2) RETURNING *",
-          [passenger.passengerName, busSeat.seatNumber]
+          [passenger.name, busSeat.seatNumber]
         );
         console.log("Inserted passenger ", insertedPassenger.rows[0].id);
         updateResult = await client.query(
